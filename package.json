@@ -1,0 +1,75 @@
+{
+  "name": "go-path-jumper",
+  "displayName": "Go Path Jumper",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:go"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "go",
+        "extensions": [
+          ".go"
+        ],
+        "aliases": [
+          "Go",
+          "go"
+        ]
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Go Path Jumper",
+      "properties": {
+        "go-path-jumper.BasePath": {
+          "type": "string",
+          "default": "/",
+          "description": "ファイルのベースパスを指定します。"
+        },
+        "go-path-jumper.FileExtension": {
+          "type": "string",
+          "default": ".csv",
+          "description": "ファイルの拡張子を指定します。"
+        },
+        "go-path-jumper.RegexPattern": {
+          "type": "string",
+          "default": "\".*\"",
+          "description": "ファイルパスを検出するための正規表現パターンを指定します。"
+        },
+        "go-path-jumper.RegexMatchPattern": {
+          "type": "string",
+          "default": "\"([^\"]+)\"",
+          "description": "ファイルパスを抽出するための正規表現パターンを指定します。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.93.0",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^9.9.1",
+    "typescript": "^5.5.4",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
