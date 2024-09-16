@@ -1,8 +1,8 @@
 # Go Path Jumper
 
-[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/your-publisher-id.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=your-publisher-id.go-path-jumper)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/your-publisher-id.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=your-publisher-id.go-path-jumper)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/your-publisher-id.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=your-publisher-id.go-path-jumper)
+[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/cr4ne89.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/cr4ne89.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/cr4ne89.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper)
 
 Go Path Jumper は、Go 言語のコード内に記載されたファイルのパスから、対応するファイルに素早くジャンプできる拡張機能です。
 
@@ -17,7 +17,7 @@ Go Path Jumper は、Go 言語のコード内に記載されたファイルの�
 2. 検索バーに「**Go Path Jumper**」と入力し、一覧から選択します。
 3. **[インストール]** ボタンをクリックします。
 
-または、[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=your-publisher-id.go-path-jumper) から直接ダウンロードできます。
+または、[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper) から直接ダウンロードできます。
 
 ## 使い方
 
