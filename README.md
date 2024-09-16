@@ -6,12 +6,12 @@
 
 Go Path Jumper は、Go 言語のコード内に記載されたファイルのパスから、対応するファイルに素早くジャンプできる拡張機能です。
 
-## 特長
+## Feature
 
 - **Command + Click** でコード内のファイルパスから直接ジャンプ
 - ユーザー設定可能なベースパス、拡張子、正規表現パターン
 
-## インストール
+## Installation
 
 1. VSCode を開き、拡張機能タブをクリックします。
 2. 検索バーに「**Go Path Jumper**」と入力し、一覧から選択します。
@@ -19,13 +19,13 @@ Go Path Jumper は、Go 言語のコード内に記載されたファイルの�
 
 または、[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper) から直接ダウンロードできます。
 
-## 使い方
+## Usage
 
 1. Go ファイルを開き、対象のファイルのパスが記載された部分にカーソルを合わせます。
 2. **Command (Mac)** または **Ctrl (Windows/Linux)** キーを押しながら、ファイルのパスをクリックします。
 3. 対応するファイルが開きます。
 
-## 設定
+## Setup
 
 - **`go-path-jumper.BasePath`**
 
