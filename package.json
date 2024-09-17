@@ -7,9 +7,9 @@
     "url": "https://github.com/cr4ne89/go-path-jumper"
   },
   "description": "Go Path Jumper allows quick navigation to files from paths in Go code.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
-    "vscode": "^1.93.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
