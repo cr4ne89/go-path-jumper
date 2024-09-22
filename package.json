@@ -55,6 +55,31 @@
           "type": "string",
           "default": "\"([^\"]+)\"",
           "description": "ファイルパスを抽出するための正規表現パターンを指定します。"
+        },
+        "go-path-jumper.SecondarySplitter": {
+          "type": "string",
+          "default": "/",
+          "description": "ファイルのベースパスのスプリッターを設定します。"
+        },
+        "go-path-jumper.SecondaryBasePath": {
+          "type": "string",
+          "default": "/",
+          "description": "ファイルのベースパスを指定します。"
+        },
+        "go-path-jumper.SecondaryFileExtension": {
+          "type": "string",
+          "default": ".csv",
+          "description": "ファイルの拡張子を指定します。"
+        },
+        "go-path-jumper.SecondaryRegexPattern": {
+          "type": "string",
+          "default": "\".*\"",
+          "description": "ファイルパスを検出するための正規表現パターンを指定します。"
+        },
+        "go-path-jumper.SecondaryRegexMatchPattern": {
+          "type": "string",
+          "default": "\"([^\"]+)\"",
+          "description": "ファイルパスを抽出するための正規表現パターンを指定します。"
         }
       }
     }
