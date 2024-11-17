@@ -7,7 +7,7 @@
     "url": "https://github.com/cr4ne89/go-path-jumper"
   },
   "description": "Go Path Jumper allows quick navigation to files from paths in Go code.",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -20,6 +20,30 @@
   "main": "./out/extension.js",
   "icon": "images/icon.png",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "goPathJumperReferences",
+          "name": "Go Path Jumper"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "go-path-jumper.findFileReferences",
+        "title": "GPJ: Find File References",
+        "category": "Go Path Jumper"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "go-path-jumper.findFileReferences",
+          "when": "editorTextFocus",
+          "group": "goPathJumper@0"
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "Go Path Jumper",
