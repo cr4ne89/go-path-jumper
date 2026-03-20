@@ -1,8 +1,8 @@
 # Go Path Jumper
 
-[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/cr4ne89.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/cr4ne89.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/cr4ne89.go-path-jumper)](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper)
+[![Open VSX Version](https://img.shields.io/open-vsx/v/cr4ne89/go-path-jumper)](https://open-vsx.org/extension/cr4ne89/go-path-jumper)
+[![Open VSX Downloads](https://img.shields.io/open-vsx/dt/cr4ne89/go-path-jumper)](https://open-vsx.org/extension/cr4ne89/go-path-jumper)
+[![Open VSX Rating](https://img.shields.io/open-vsx/rating/cr4ne89/go-path-jumper)](https://open-vsx.org/extension/cr4ne89/go-path-jumper)
 
 Go Path Jumper は、コード内に記載されたファイルのパスから、対応するファイルに素早くジャンプできる拡張機能です。
 
@@ -17,7 +17,7 @@ Go Path Jumper は、コード内に記載されたファイルのパスから�
 2. 検索バーに「**Go Path Jumper**」と入力し、一覧から選択します。
 3. **[インストール]** ボタンをクリックします。
 
-または、[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=cr4ne89.go-path-jumper) から直接ダウンロードできます。
+または、[Visual Studio Marketplace](https://open-vsx.org/extension/cr4ne89/go-path-jumper) から直接ダウンロードできます。
 
 ## Usage
 
