@@ -2,19 +2,22 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { JumperSetting } from '../models/JumperSetting';
 import { ReferencesProvider } from '../providers/ReferencesProvider';
+import { compileSettings } from '../utils/settings';
+import { findFiles, processFilesInBatches, extractPathMatches } from '../utils/fileSearch';
+import { positionAt } from '../utils/textUtils';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     settings: JumperSetting[],
     referencesProvider: ReferencesProvider
 ) {
-    const findFileReferencesCommand = vscode.commands.registerCommand(
+    const command = vscode.commands.registerCommand(
         'go-path-jumper.findFileReferences',
         async (uri: vscode.Uri) => {
             await findFileReferences(uri, settings, referencesProvider);
         }
     );
-    context.subscriptions.push(findFileReferencesCommand);
+    context.subscriptions.push(command);
 }
 
 async function findFileReferences(
@@ -37,12 +40,21 @@ async function findFileReferences(
         const rootPath = workspaceFolder.uri.fsPath;
 
         const targetExtension = path.extname(targetUri.fsPath);
-
-        // 開いているファイルの拡張子に関連する設定を取得する(検索時に関係のない言語のファイルを読み取りたくないため)
-        const relevantSettings = settings.filter(setting => setting.fileExtension === targetExtension);
+        const relevantSettings = settings.filter(s => s.fileExtension === targetExtension);
 
         if (relevantSettings.length === 0) {
             vscode.window.showInformationMessage('このファイルに関連する設定が見つかりませんでした。');
+            return;
+        }
+
+        const compiledSettings = compileSettings(relevantSettings);
+        if (compiledSettings.length === 0) {
+            return;
+        }
+
+        const files = await findFiles(compiledSettings);
+        if (files.length === 0) {
+            vscode.window.showInformationMessage('対象言語のファイルが見つかりませんでした。');
             return;
         }
 
@@ -54,130 +66,42 @@ async function findFileReferences(
             },
             async (progress, cancellationToken) => {
                 const references: vscode.Location[] = [];
-                let totalFiles = 0;
-                let processedFiles = 0;
+                const normalizedTargetPath = path.normalize(targetUri.fsPath);
 
-                // 現状は同じ言語の設定を複数持つケースは想定していないため、設定をループする必要ないかも
-                for (const [index, setting] of relevantSettings.entries()) {
-                    if (cancellationToken.isCancellationRequested) {
-                        referencesProvider.clearReferences();
-                        cancelFindReferences();
-                        return;
-                    }
-
-                    let regexMatchPattern: RegExp;
-
-                    try {
-                        regexMatchPattern = new RegExp(setting.regexMatchPattern, 'g');
-                    } catch (error: any) {
-                        vscode.window.showErrorMessage(
-                            `正規表現のコンパイルに失敗しました（設定 ${index + 1}）：${error.message}`
-                        );
-                        continue;
-                    }
-
-                    let targetFilePath = path.relative(path.join(rootPath, setting.basePath), targetUri.fsPath);
-                    targetFilePath = targetFilePath.replace(/\\/g, '/'); // Windows対応
-                    targetFilePath = targetFilePath.replace(/\//g, setting.delimiter);
-                    targetFilePath = targetFilePath.replace(new RegExp(`${setting.fileExtension}$`), '');
-
-                    const files = await getSearchFiles(rootPath, setting);
-                    totalFiles += files.length;
-
-                    for (const file of files) {
-                        if (cancellationToken.isCancellationRequested) {
-                            referencesProvider.clearReferences();
-                            cancelFindReferences();
-                            return;
-                        }
-
-                        processedFiles++;
-
-                        if (processedFiles % 10 === 0 || processedFiles === totalFiles) {
-                            progress.report({
-                                increment: (10 / totalFiles) * 100,
-                                message: `(${processedFiles}/${totalFiles}) ${path.basename(file.fsPath)}`,
-                            });
-                        }
-
-                        const fileDocument = await vscode.workspace.openTextDocument(file);
-                        if (fileDocument.languageId !== setting.language) continue;
-
-                        const text = fileDocument.getText();
-
-                        let matchResult;
-                        while ((matchResult = regexMatchPattern.exec(text)) !== null) {
-                            if (cancellationToken.isCancellationRequested) {
-                                referencesProvider.clearReferences();
-                                cancelFindReferences();
-                                return;
-                            }
-
-                            let filePath = matchResult[1];
-                            if (filePath) {
-                                filePath = filePath.replace(new RegExp(setting.delimiter, 'g'), '/');
-                                const fullPath = path.join(rootPath, setting.basePath, filePath + setting.fileExtension);
-                                const normalizedFullPath = path.normalize(fullPath);
-                                const normalizedTargetPath = path.normalize(targetUri.fsPath);
-
-                                if (normalizedFullPath === normalizedTargetPath) {
-                                    const position = fileDocument.positionAt(matchResult.index);
-                                    references.push(new vscode.Location(file, position));
-                                }
+                const completed = await processFilesInBatches(
+                    files,
+                    { cancellationToken, progress },
+                    (file, text, fileExt) => {
+                        const pathMatches = extractPathMatches(file, text, fileExt, compiledSettings, rootPath);
+                        for (const match of pathMatches) {
+                            const hasTarget = match.fullPaths.some(
+                                fp => path.normalize(fp) === normalizedTargetPath
+                            );
+                            if (hasTarget) {
+                                references.push(new vscode.Location(file, positionAt(text, match.matchIndex)));
                             }
                         }
                     }
-                }
+                );
 
-                if (cancellationToken.isCancellationRequested) {
+                if (!completed) {
                     referencesProvider.clearReferences();
-                    cancelFindReferences();
+                    vscode.window.setStatusBarMessage('GPJ キャンセルしました', 5000);
                     return;
                 }
 
                 if (references.length > 0) {
                     referencesProvider.setReferences(references);
-                    successFindReferences(references.length);
+                    vscode.window.setStatusBarMessage(`GPJ ${references.length} 件の参照が見つかりました`, 5000);
                     vscode.commands.executeCommand('workbench.view.explorer');
                 } else {
                     referencesProvider.clearReferences();
-                    failureFindReferences();
+                    vscode.window.setStatusBarMessage('GPJ 参照が見つかりませんでした', 5000);
                 }
             }
         );
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`参照の検索中にエラーが発生しました：${error.message}`);
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        vscode.window.showErrorMessage(`参照の検索中にエラーが発生しました：${message}`);
     }
-}
-
-async function getSearchFiles(rootPath: string, setting: JumperSetting): Promise<vscode.Uri[]> {
-    const languageExtensions = getExtensionsForLanguage(setting.language);
-    if (!languageExtensions || languageExtensions.length === 0) {
-        console.warn(`言語 '${setting.language}' に対応するファイル拡張子が見つかりませんでした。`);
-        return [];
-    }
-    const globPattern = `**/*.{${languageExtensions.join(',')}}`;
-    const files = await vscode.workspace.findFiles(globPattern);
-    return files;
-}
-
-function getExtensionsForLanguage(languageId: string): string[] {
-    const languages = vscode.extensions.all.flatMap(ext => ext.packageJSON.contributes?.languages || []);
-    const language = languages.find((lang: any) => lang.id === languageId);
-    if (language && language.extensions) {
-        return language.extensions.map((ext: string) => ext.replace(/^\./, ''));
-    }
-    return [];
-}
-
-function successFindReferences(i: number) {
-    vscode.window.setStatusBarMessage(`GPJ ${i} 件の参照が見つかりました`, 5000);
-}
-
-function failureFindReferences() {
-    vscode.window.setStatusBarMessage('GPJ 参照が見つかりませんでした', 5000);
-}
-
-function cancelFindReferences() {
-    vscode.window.setStatusBarMessage('GPJ キャンセルしました', 5000);
 }
