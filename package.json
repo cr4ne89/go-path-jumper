@@ -7,7 +7,7 @@
     "url": "https://github.com/cr4ne89/go-path-jumper"
   },
   "description": "Go Path Jumper allows quick navigation to files from paths in Go code.",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "license": "MIT",
   "engines": {
     "vscode": "1.105.1"
@@ -73,7 +73,9 @@
                   },
                   {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "複数の言語ID"
                   }
                 ],
@@ -116,7 +118,9 @@
               },
               "sourceExtensions": {
                 "type": "array",
-                "items": { "type": "string" },
+                "items": {
+                  "type": "string"
+                },
                 "description": "検索対象のファイル拡張子を直接指定します（例: [\".go\"]）。省略時は language から自動検出します。"
               },
               "lint": {
@@ -134,7 +138,9 @@
         },
         "go-path-jumper.excludePaths": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "description": "検索対象から除外するパスのglobパターンを指定します（例: [\"**/vendor/**\", \"**/generated/**\"]）。"
         }
