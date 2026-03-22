@@ -65,29 +65,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "language": {
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "description": "単一の言語ID"
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "複数の言語ID"
-                  }
-                ],
-                "default": "go",
-                "description": "ファイルの対象言語を指定します。単一の言語IDまたは配列で複数指定できます。"
-              },
               "basePath": {
                 "type": "string",
                 "default": "/",
                 "description": "ファイルのベースパスを指定します。"
               },
-              "fileExtension": {
+              "targetExt": {
                 "type": "string",
                 "default": ".csv",
                 "description": "ファイルの拡張子を指定します。"
@@ -97,12 +80,7 @@
                 "default": "/",
                 "description": "ファイルパスの区切り文字を設定します。"
               },
-              "regexPattern": {
-                "type": "string",
-                "default": "\".*\"",
-                "description": "ファイルパスを検出するための正規表現パターンを指定します。"
-              },
-              "regexMatchPattern": {
+              "regex": {
                 "type": "string",
                 "default": "\"([^\"]+)\"",
                 "description": "ファイルパスを抽出するための正規表現パターンを指定します。"
@@ -112,27 +90,26 @@
                 "default": 1,
                 "description": "ファイルパスとして使用するキャプチャグループ番号を指定します。"
               },
-              "defaultBasePath": {
+              "fallbackPath": {
                 "type": "string",
                 "description": "テンプレート変数が解決できない場合のフォールバックベースパスを指定します。"
               },
-              "sourceExtensions": {
+              "sourceExt": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 },
-                "description": "検索対象のファイル拡張子を直接指定します（例: [\".go\"]）。省略時は language から自動検出します。"
+                "description": "検索対象のファイル拡張子を直接指定します（例: [\".go\"]）。"
               },
-              "lint": {
+              "checkFilePaths": {
                 "type": "boolean",
                 "default": true,
                 "description": "この設定を GPJ: Check File Paths の対象にするかを指定します。"
               }
             },
             "required": [
-              "language",
-              "regexPattern",
-              "regexMatchPattern"
+              "sourceExt",
+              "regex"
             ]
           }
         },

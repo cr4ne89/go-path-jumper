@@ -32,7 +32,7 @@ async function checkFilePaths(
 
     diagnosticCollection.clear();
 
-    const lintSettings = settings.filter(s => s.lint !== false);
+    const lintSettings = settings.filter(s => s.checkFilePaths !== false);
     const compiledSettings = compileSettings(lintSettings);
     if (compiledSettings.length === 0) {
         return;

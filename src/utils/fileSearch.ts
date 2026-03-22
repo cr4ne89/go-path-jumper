@@ -5,11 +5,6 @@ import { resolveAllPaths } from './templateResolver';
 import { CompiledSetting } from './settings';
 import { matchesFileExtension } from './textUtils';
 
-interface ContributedLanguage {
-    id: string;
-    extensions?: string[];
-}
-
 const DEFAULT_EXCLUDES = ['**/node_modules/**', '**/.git/**', '**/out/**', '**/dist/**'];
 
 function getExcludePattern(): string {
@@ -18,33 +13,9 @@ function getExcludePattern(): string {
     return `{${[...DEFAULT_EXCLUDES, ...userExcludes].join(',')}}`;
 }
 
-const extensionCache = new Map<string, string[]>();
-
 /** 設定からソースファイルの拡張子リストを取得する */
 export function getSearchExtensions(setting: JumperSetting): string[] {
-    if (setting.sourceExtensions && setting.sourceExtensions.length > 0) {
-        return setting.sourceExtensions.map(ext => ext.replace(/^\./, ''));
-    }
-    const languages = Array.isArray(setting.language) ? setting.language : [setting.language];
-    const allExtensions = new Set<string>();
-    for (const lang of languages) {
-        for (const ext of getExtensionsForLanguage(lang)) {
-            allExtensions.add(ext);
-        }
-    }
-    return [...allExtensions];
-}
-
-/** 言語IDからファイル拡張子を取得する（メモ化あり） */
-export function getExtensionsForLanguage(languageId: string): string[] {
-    if (extensionCache.has(languageId)) {
-        return extensionCache.get(languageId)!;
-    }
-    const languages = vscode.extensions.all.flatMap(ext => ext.packageJSON.contributes?.languages || []);
-    const language = languages.find((lang: ContributedLanguage) => lang.id === languageId);
-    const extensions = language?.extensions?.map((ext: string) => ext.replace(/^\./, '')) || [];
-    extensionCache.set(languageId, extensions);
-    return extensions;
+    return setting.sourceExt.map(ext => ext.replace(/^\./, ''));
 }
 
 /** 設定に該当するファイルを検索する */
@@ -144,7 +115,7 @@ export function extractPathMatches(
             }
 
             const fullPaths = candidates.map(resolved =>
-                path.join(rootPath, resolved.basePath, resolved.filePath + setting.fileExtension)
+                path.join(rootPath, resolved.basePath, resolved.filePath + setting.targetExt)
             );
 
             matches.push({

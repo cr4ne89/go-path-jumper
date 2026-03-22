@@ -13,7 +13,7 @@ export function compileSettings(settings: JumperSetting[]): CompiledSetting[] {
         try {
             compiled.push({
                 setting,
-                regex: new RegExp(setting.regexMatchPattern, 'g'),
+                regex: new RegExp(setting.regex, 'g'),
             });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error);
@@ -30,31 +30,33 @@ export function getJumperSettings(): JumperSetting[] {
     const settingsArray = config.get<Record<string, unknown>[]>('settings', []);
     return settingsArray
         .map((setting, index) => {
-            const language = setting.language;
-            const regexPattern = setting.regexPattern;
-            const regexMatchPattern = setting.regexMatchPattern;
+            const regex = setting.regex;
             const basePath = setting.basePath || '/';
-            const fileExtension = setting.fileExtension || '';
+            const targetExt = setting.targetExt || '';
             const delimiter = setting.delimiter || '/';
             const pathCapture = setting.pathCapture ?? 1;
-            const defaultBasePath = setting.defaultBasePath;
+            const fallbackPath = setting.fallbackPath;
+            const sourceExt = setting.sourceExt;
 
-            if (!language || !regexPattern || !regexMatchPattern) {
-                console.warn(`設定${index + 1}が不完全なため、スキップされました。`);
+            if (!regex) {
+                console.warn(`設定${index + 1}が不完全なため、スキップされました（regex が未設定）。`);
+                return null;
+            }
+
+            if (!Array.isArray(sourceExt) || sourceExt.length === 0) {
+                console.warn(`設定${index + 1}が不完全なため、スキップされました（sourceExt が未設定または空）。`);
                 return null;
             }
 
             return {
-                language,
-                regexPattern,
-                regexMatchPattern,
+                regex,
                 basePath,
-                fileExtension,
+                targetExt,
                 delimiter,
                 pathCapture,
-                defaultBasePath,
-                sourceExtensions: setting.sourceExtensions,
-                lint: setting.lint,
+                fallbackPath,
+                sourceExt,
+                checkFilePaths: setting.checkFilePaths,
             } as JumperSetting;
         })
         .filter(setting => setting !== null) as JumperSetting[];

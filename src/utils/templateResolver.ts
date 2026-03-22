@@ -27,9 +27,9 @@ export function resolvePathFromMatch(setting: JumperSetting, matchResult: RegExp
     });
 
     if (hasTemplate && !allResolved) {
-        // テンプレート解決失敗 → defaultBasePath にフォールバック
-        if (setting.defaultBasePath) {
-            basePath = setting.defaultBasePath;
+        // テンプレート解決失敗 → fallbackPath にフォールバック
+        if (setting.fallbackPath) {
+            basePath = setting.fallbackPath;
         } else {
             return null;
         }
@@ -42,7 +42,7 @@ export function resolvePathFromMatch(setting: JumperSetting, matchResult: RegExp
 
 /**
  * マッチ結果から候補パスを全て返す。
- * basePath（テンプレート解決済み）を先頭に、defaultBasePath が異なる場合はフォールバックとして追加。
+ * basePath（テンプレート解決済み）を先頭に、fallbackPath が異なる場合はフォールバックとして追加。
  */
 export function resolveAllPaths(setting: JumperSetting, matchResult: RegExpMatchArray): ResolvedPath[] {
     const filePath = matchResult[setting.pathCapture];
@@ -58,9 +58,9 @@ export function resolveAllPaths(setting: JumperSetting, matchResult: RegExpMatch
         paths.push(primary);
     }
 
-    // defaultBasePath が存在し、primary と異なる場合はフォールバック候補として追加
-    if (setting.defaultBasePath) {
-        const alreadyIncluded = paths.some(p => p.basePath === setting.defaultBasePath);
+    // fallbackPath が存在し、primary と異なる場合はフォールバック候補として追加
+    if (setting.fallbackPath) {
+        const alreadyIncluded = paths.some(p => p.basePath === setting.fallbackPath);
         if (!alreadyIncluded) {
             let fallbackFilePath = normalizedFilePath;
             const templateMatches = setting.basePath.matchAll(/\$\{(\d+)\}/g);
@@ -73,7 +73,7 @@ export function resolveAllPaths(setting: JumperSetting, matchResult: RegExpMatch
                     }
                 }
             }
-            paths.push({ basePath: setting.defaultBasePath, filePath: fallbackFilePath });
+            paths.push({ basePath: setting.fallbackPath, filePath: fallbackFilePath });
         }
     }
 

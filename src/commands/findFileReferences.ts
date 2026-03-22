@@ -40,7 +40,7 @@ async function findFileReferences(
         const rootPath = workspaceFolder.uri.fsPath;
 
         const targetExtension = path.extname(targetUri.fsPath);
-        const relevantSettings = settings.filter(s => s.fileExtension === targetExtension);
+        const relevantSettings = settings.filter(s => s.targetExt === targetExtension);
 
         if (relevantSettings.length === 0) {
             vscode.window.showInformationMessage('このファイルに関連する設定が見つかりませんでした。');

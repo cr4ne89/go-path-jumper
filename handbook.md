@@ -59,7 +59,7 @@ src/
 │   ├── JumperSetting.ts          # 設定インターフェース
 │   └── ReferenceItem.ts          # ツリービューアイテム
 ├── providers/
-│   ├── JumpProvider.ts           # DefinitionProvider（Cmd+Click）
+│   ├── JumpProvider.ts           # DocumentLinkProvider（パスリンク表示 + Click ジャンプ）
 │   └── ReferencesProvider.ts     # TreeDataProvider（Explorer パネル）
 └── utils/
     ├── settings.ts               # VS Code 設定の読み込み・正規表現コンパイル
@@ -72,7 +72,7 @@ src/
 
 ```
 extension.ts（初期化）
-├── JumpProvider（Ctrl/Cmd+Click ジャンプ）
+├── JumpLinkProvider（DocumentLinkProvider: パスに下線表示 + Click ジャンプ）
 ├── ReferencesProvider（検索結果表示）
 ├── findFileReferences コマンド（参照検索）
 └── checkFilePaths コマンド（パス検証）
@@ -88,13 +88,26 @@ extension.ts（初期化）
 
 1. `settings.ts` でユーザー設定（`go-path-jumper.settings`）を読み込み `JumperSetting[]` に変換
 2. `compileSettings()` で正規表現を事前コンパイル → `CompiledSetting[]`
-3. `fileSearch.ts` の `findFiles()` で対象ファイルを検索
+3. `fileSearch.ts` の `findFiles()` で `sourceExt` に該当するファイルを検索
 4. `processFilesInBatches()` でファイルをバッチ処理
 5. `extractPathMatches()` が各ファイルからパスマッチを抽出（共通処理）
 6. 各コマンドがマッチ結果を用途に応じて処理:
-   - **JumpProvider**: 候補パスの存在チェック → 最初に見つかったファイルにジャンプ
+   - **JumpLinkProvider**: ファイル開時にパスリンクを生成（下線表示）→ クリック時に候補パスの存在チェック → ジャンプ
    - **findFileReferences**: 候補パスがターゲットファイルと一致するかチェック
-   - **checkFilePaths**: 候補パスのいずれかが存在するかチェック → 存在しなければ診断警告
+   - **checkFilePaths**: `checkFilePaths: false` の設定を除外 → 候補パスのいずれかが存在するかチェック → 存在しなければ診断警告
+
+### 設定フィールド（`go-path-jumper.settings`）
+
+| フィールド | 必須 | 説明 |
+|-----------|------|------|
+| `sourceExt` | Yes | 検索対象の拡張子（例: `[".go", ".ts"]`） |
+| `regex` | Yes | パス抽出用の正規表現 |
+| `basePath` | - | ベースパス（デフォルト: `/`、テンプレート `${N}` 対応） |
+| `targetExt` | - | ジャンプ先ファイルの拡張子 |
+| `delimiter` | - | パス区切り文字（デフォルト: `/`） |
+| `pathCapture` | - | パスのキャプチャグループ番号（デフォルト: `1`） |
+| `fallbackPath` | - | `basePath` テンプレート解決失敗時のフォールバック |
+| `checkFilePaths` | - | `false` でパスチェック対象から除外（デフォルト: `true`） |
 
 ### 主要な型
 

@@ -1,12 +1,10 @@
 export interface JumperSetting {
-    language: string | string[];
-    regexPattern: string;
-    regexMatchPattern: string;
+    regex: string;
     basePath: string;
-    fileExtension: string;
+    targetExt: string;
     delimiter: string;
     pathCapture: number;
-    defaultBasePath?: string;
-    sourceExtensions?: string[];
-    lint?: boolean;
+    fallbackPath?: string;
+    sourceExt: string[];
+    checkFilePaths?: boolean;
 }

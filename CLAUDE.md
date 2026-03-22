@@ -35,7 +35,7 @@ src/
 │   ├── JumperSetting.ts      # 設定インターフェース
 │   └── ReferenceItem.ts      # ツリービューアイテム
 ├── providers/
-│   ├── JumpProvider.ts       # DefinitionProvider（Cmd+Click）
+│   ├── JumpProvider.ts       # DocumentLinkProvider（パスリンク表示 + Click ジャンプ）
 │   └── ReferencesProvider.ts # TreeDataProvider（Explorer パネル）
 └── utils/
     ├── settings.ts           # 設定読み込み + 正規表現コンパイル（CompiledSetting）
@@ -43,6 +43,19 @@ src/
     ├── templateResolver.ts   # basePath テンプレート変数 ${N} の解決
     └── textUtils.ts          # テキスト位置計算 + 拡張子判定
 ```
+
+## 設定フィールド（`go-path-jumper.settings`）
+
+| フィールド | 必須 | 説明 |
+|-----------|------|------|
+| `sourceExt` | Yes | 検索対象の拡張子（例: `[".go", ".ts"]`） |
+| `regex` | Yes | パス抽出用の正規表現 |
+| `basePath` | - | ベースパス（デフォルト: `/`、テンプレート `${N}` 対応） |
+| `targetExt` | - | ジャンプ先ファイルの拡張子 |
+| `delimiter` | - | パス区切り文字（デフォルト: `/`） |
+| `pathCapture` | - | パスのキャプチャグループ番号（デフォルト: `1`） |
+| `fallbackPath` | - | `basePath` テンプレート解決失敗時のフォールバック |
+| `checkFilePaths` | - | `false` でパスチェック対象から除外 |
 
 ## 主要な型
 
